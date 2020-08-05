@@ -13,19 +13,28 @@ class Orders::Stripe
       order.set_paid
     end
   rescue Stripe::StripeError => e
-    binding.pry
     order.error_message = e.message
     order.set_failed
   end
 
   private
 
-  def self.excute_charge(price_cents:, description:, card_token:)
-    Stripe::Charge.create({
-      amount: price_cents.to_s,
-      currency: "usd",
-      description: description,
-      source: card_token,
-    })
+  class << self
+    def excute_charge(price_cents:, description:, card_token:)
+      Stripe::Charge.create({
+        amount: price_cents.to_s,
+        currency: "usd",
+        description: description,
+        source: card_token,
+      })
+    end
+
+    def find_or_create_customer(card_token:, customer_id:, email:)
+      if customer_id
+        Stripe::Customer.retrieve()
+      else
+
+      end
+    end
   end
 end
