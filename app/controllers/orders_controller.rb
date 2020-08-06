@@ -2,6 +2,7 @@ class OrdersController < ApplicationController
   def index
     @products = Product.all
     @products_purchase = Product.where(stripe_plan_name: nil, paypal_plan_name: nil)
+    @products_subscription = @products - @products_purchase
   end
 
   def checkout
@@ -10,7 +11,7 @@ class OrdersController < ApplicationController
       @order.price_cents = Product.find(order_params[:product_id]).price_cents
       @order.user_id = current_user.id
 
-      Orders::Stripe.excute(order: @order)
+      Orders::Stripe.excute(order: @order, user: current_user)
     else
 
     end
