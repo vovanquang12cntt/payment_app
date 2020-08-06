@@ -11,6 +11,15 @@
           %span{id: "radioButtonName#{product.id}"} #{product.name}
           %span{id: "radioButtonPrice#{product.id}", :'data-price' => "#{product.price_cents}"} #{humanized_money_with_symbol product.price}
         %br
+
+      %h4 Subscriptions
+      - @products_subscription.each do |product|
+        %div
+          = radio_button_tag 'orders[product_id]', product.id
+          %span{id: "radioButtonName#{product.id}"} #{product.name}
+          %span{id: "radioButtonPrice#{product.id}", :'data-price' => "#{product.price_cents}"} #{humanized_money_with_symbol product.price}
+        %br
+
     %hr
     %h1 Payment Method
     .form_row
