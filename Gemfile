@@ -29,6 +29,7 @@ gem "haml"
 gem "jquery-rails"
 gem "money-rails"
 gem 'stripe-rails'
+gem 'paypal-sdk-rest'
 
 # Reduces boot times through caching; required in config/boot.rb
 gem 'bootsnap', '>= 1.4.2', require: false

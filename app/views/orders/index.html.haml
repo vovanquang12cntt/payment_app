@@ -1,4 +1,5 @@
 = stripe_javascript_tag
+%script(src="https://www.paypal.com/sdk/js?client-id=#{ENV['PAYPAL_CLIENT_ID']}")
 %div
   %h1 List of products
   = form_tag({:controller => "orders", :action => "checkout" }, {:id => 'order-details'}) do
@@ -97,6 +98,44 @@
       return false;
     });
   }());
+
+  (function setupPaypal() {
+    function isPayment() {
+      return $('[data-charges-and-payments-section] input[name="orders[product_id]"]:checked').length
+    }
+
+    function submitOrderPaypal(chargeID) {
+      var $form = $('#order-details');
+
+      $form.append($('<input type="hide" name="orders[charge_id]"/>').val(chargeID));
+      $('#order-type').val('paypal');
+      $form.submit();
+    }
+
+    paypal.Buttons({
+      env: 'sandbox',
+      createOrder: function() {
+        $('#order-type').val('paypal');
+        if(isPayment()) {
+          return $.post("#{paypal_create_payment_url}", $('#order-details').serialize()).then(function(data) {
+            return data.token;
+          })
+        }
+      },
+      onApprove: function(data) {
+        if(isPayment()) {
+          return $.post('#{paypal_execute_payment_url}', {
+            payment_id: data.paymentID,
+            payer_id: data.payerID,
+          }).then(function() {
+            submitOrderPaypal(data.paymentID)
+          })
+        } else {
+
+        }
+      }
+    }).render('#submit-paypal');
+  }())
 
 
 :css
